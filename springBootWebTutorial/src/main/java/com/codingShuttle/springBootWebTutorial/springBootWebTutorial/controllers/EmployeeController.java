@@ -3,6 +3,7 @@ package com.codingShuttle.springBootWebTutorial.springBootWebTutorial.controller
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.dto.EmployeeDTO;
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.entities.EmployeeEntity;
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.repositories.EmployeeRepository;
+import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -16,30 +17,30 @@ public class EmployeeController {
 //        return "Secret Message : Hey Biswaranjan YOU Can Do IT";
 //    }
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public  EmployeeController(EmployeeRepository employeeRepository){
-        this.employeeRepository = employeeRepository;
+    public  EmployeeController(EmployeeService employeeService){
+        this.employeeService = employeeService;
     }
 
     @GetMapping(path = "/{employeeId}")
-    public EmployeeEntity getEmployeeById(@PathVariable(name = "employeeId") Long id){
+    public EmployeeDTO getEmployeeById(@PathVariable(name = "employeeId") Long id){
         // return new EmployeeDTO(employeeId, "Biswa", "biswa@gmail.com", 22, LocalDate.of(2024, 1,2), true);
         // Jackson Convert My Java Object to the Json Object
-        return  employeeRepository.findById(id).orElse(null);
+        return  employeeService.getEmployeeById(id);
 
     }
     @GetMapping //http://localhost:8080/employees?age=12&sortBy=anuj
-    public List<EmployeeEntity> getAllEmployees(@RequestParam(required = false)Integer age,
+    public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false)Integer age,
                                                 @RequestParam(required = false) String sortBy){
-        return employeeRepository.findAll();
+        return employeeService.getAllEmployees();
     }
 
     @PostMapping
-    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity inputEmployee){
+    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
 //        inputEmployee.setId(100L);
 //        return inputEmployee;
-        return employeeRepository.save(inputEmployee);
+        return employeeService.createNewEmployee(inputEmployee);
     }
 
     @PutMapping
