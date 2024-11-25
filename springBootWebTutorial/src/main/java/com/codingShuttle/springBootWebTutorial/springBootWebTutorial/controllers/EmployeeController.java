@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController // It is use for Rest API character
 @RequestMapping(path = "/employees") // It is the Parent Mapping
+
 public class EmployeeController {
 //    @GetMapping(path = "/getSecretMsg")
 //    public String getMySuperSecretMessage(){
@@ -43,9 +44,14 @@ public class EmployeeController {
         return employeeService.createNewEmployee(inputEmployee);
     }
 
-    @PutMapping
-    public String updateEmployeeById(){
-        return "Updated the Employee Details";
+    @PutMapping("/{employeeId}")
+    public EmployeeDTO updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+        return employeeService.updateEmployeeById(employeeId, employeeDTO);
+    }
+
+    @DeleteMapping
+    public boolean deleteEmployeeById( @PathVariable Long employeeId){
+        return employeeService.deleteEmployeeById(employeeId);
     }
 
 }
