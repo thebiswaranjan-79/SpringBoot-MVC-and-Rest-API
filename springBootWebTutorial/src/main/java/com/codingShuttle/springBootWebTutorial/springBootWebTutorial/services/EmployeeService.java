@@ -3,10 +3,14 @@ package com.codingShuttle.springBootWebTutorial.springBootWebTutorial.services;
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.dto.EmployeeDTO;
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.entities.EmployeeEntity;
 import com.codingShuttle.springBootWebTutorial.springBootWebTutorial.repositories.EmployeeRepository;
+import org.apache.el.util.ReflectionUtil;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,5 +57,26 @@ public class EmployeeService {
         }
         employeeRepository.deleteById(employeeId);
         return  true;
+    }
+
+    public boolean isExistById(Long employeeId){
+        return  employeeRepository.existsById(employeeId);
+    }
+
+    public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String,Object> updates) {
+        boolean exist = employeeRepository.existsById(employeeId);
+        if(!exist){
+            return null;
+        }
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
+
+        // Reflextion
+        updates.forEach((field, value) -> {
+            Field fieldToBeUpdated = ReflectionUtils.findRequiredField(EmployeeEntity.class, field);
+            fieldToBeUpdated.setAccessible(true);
+            ReflectionUtils.setField(fieldToBeUpdated, employeeEntity, value);
+        });
+
+         return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
     }
 }

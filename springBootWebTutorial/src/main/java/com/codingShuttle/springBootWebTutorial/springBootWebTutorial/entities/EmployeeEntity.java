@@ -1,5 +1,6 @@
 package com.codingShuttle.springBootWebTutorial.springBootWebTutorial.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class EmployeeEntity {
 
     private LocalDate dateofJoining;
 
+    @JsonProperty("isActive")
     private Boolean isActive;
 
 
