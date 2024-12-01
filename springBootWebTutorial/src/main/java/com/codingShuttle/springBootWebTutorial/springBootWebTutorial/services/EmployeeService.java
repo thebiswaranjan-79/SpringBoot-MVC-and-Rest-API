@@ -66,7 +66,9 @@ public class EmployeeService {
     }
 
     public boolean isExistById(Long employeeId){
-        return  employeeRepository.existsById(employeeId);
+        boolean exists = employeeRepository.existsById(employeeId);
+        if(!exists) throw new ResourceNotFoundException("Employee Not Found with id: "+ employeeId);
+        return  true;
     }
 
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String,Object> updates) {
