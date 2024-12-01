@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController // It is use for Rest API character
@@ -33,7 +34,13 @@ public class EmployeeController {
         Optional<EmployeeDTO> employeeDTO  = employeeService.getEmployeeById(id);
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()-> new NoSuchElementException("Emploee Not Found"));
+    }
+
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleEmployeeNotFound(NoSuchElementException exception){
+        return  new ResponseEntity<>("Employee Not Found", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping //http://localhost:8080/employees?age=12&sortBy=anuj
@@ -51,7 +58,7 @@ public class EmployeeController {
     }
 
     @PutMapping(path = "/{employeeId}")
-    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody @Valid EmployeeDTO employeeDTO, @PathVariable Long employeeId){
         return ResponseEntity.ok(employeeService.updateEmployeeById(employeeId, employeeDTO));
     }
 
